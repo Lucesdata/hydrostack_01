@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: frontend
+    runtime: node
+    buildCommand: yarn install && yarn build
+    startCommand: yarn start -p 3000
+    autoDeploy: true
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        fromService: api
+        property: url
+        isPublic: true
+
+  - type: web
+    name: api
+    env: docker
+    dockerfilePath: ./apps/backend/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: db
+
+  - type: web
+    name: calc-api
+    env: docker
+    dockerfilePath: ./apps/calc-api/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase: db
+
+databases:
+  - name: db
+    plan: standard      # Free para prototipos, standard para MVP productivo
+    databaseName: hydrostack
+    user: hydrostack

@@ -1,5 +1,7 @@
 services:
-  # Front-end Next.js
+  # ────────────────────────────────────────────
+  # Front-end (Next.js)
+  # ────────────────────────────────────────────
   - type: web
     name: frontend
     runtime: node
@@ -7,14 +9,18 @@ services:
     startCommand: yarn start -p 3000
     autoDeploy: true
     envVars:
-      - key: NEXT_PUBLIC_API_URL     # URL pública del back-end
+      # URL externa del back-end - Render proporcionará algo como
+      # https://api-xxxxx.onrender.com
+      - key: NEXT_PUBLIC_API_URL
         fromService:
-          type: web                  # tipo de recurso destino
-          name: api                  # nombre exacto del servicio back-end
-        property: url                # expone la URL externa
+          type: web          # destino: servicio web
+          name: api          # nombre exacto del back-end
+          property: host     # host externo (sin protocolo)
         isPublic: true
 
-  # API NestJS
+  # ────────────────────────────────────────────
+  # API (NestJS)
+  # ────────────────────────────────────────────
   - type: web
     name: api
     env: docker
@@ -23,9 +29,12 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: db                  # usa la base declarada abajo
+          name: db
+          property: connectionString   # cadena completa
 
-  # Motor de cálculos FastAPI
+  # ────────────────────────────────────────────
+  # Motor de cálculos (FastAPI)
+  # ────────────────────────────────────────────
   - type: web
     name: calc-api
     env: docker
@@ -35,9 +44,13 @@ services:
       - key: DATABASE_URL
         fromDatabase:
           name: db
+          property: connectionString
 
+# ──────────────────────────────────────────────
+# Base de datos PostgreSQL
+# ──────────────────────────────────────────────
 databases:
   - name: db
-    plan: standard        # Free para prototipo; standard recomendado para MVP
+    plan: standard          # «free» sirve para pruebas; «standard» para MVP
     databaseName: hydrostack
     user: hydrostack

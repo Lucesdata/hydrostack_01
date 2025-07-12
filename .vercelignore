@@ -1,0 +1,6 @@
+
+apps/backend/
+node_modules/
+**/*.log
+.env*
+Dockerfile
